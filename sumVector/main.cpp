@@ -3,13 +3,23 @@
 #include <vector>
 #include <chrono>
 
-void sum_vec(std::vector<int> Vector1, std::vector<int> Vector2)
+static void sum_vec(std::vector<int> v1, std::vector<int> v2, std::vector<int> resoult, int start, int end)
 {
-    for (int i = 0; i < Vector1.size(); i++)
+    for (int i = start; i < end; i++)
     {
-        int sum =+ Vector1[i] + Vector2[i];
+        resoult.push_back(v1[i] + v2[i]);
     }
 }
+
+static void valueInVector(std::vector<int>& v1, std::vector<int>& v2, int size)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        v1.push_back(i);
+        v2.push_back(i + 1);
+    }
+}
+
 
 int main()
 {
@@ -22,6 +32,8 @@ int main()
 
     std::vector<int> v1;
     std::vector<int> v2;
+    std::vector<int> start_stop;
+    std::vector<int> resoult;
 
     for(auto& c_Thread : Threads)
     {
@@ -30,31 +42,22 @@ int main()
 
         for (auto& c_Vector : Size_v)
         {
-
-            v1.resize(c_Vector, 2);
-            v2.resize(c_Vector, 1);
+            valueInVector(v1, v2, c_Vector);
 
             int size_Threads = static_cast<int> (c_Vector / c_Thread);
+            for (int i = 0; i <= c_Thread - 1; ++i)
+            {
+                start_stop.push_back(i * size_Threads);
+            }
+            start_stop.push_back(c_Vector - 1);
+
             std::vector<std::thread> th;
 
             auto start = std::chrono::high_resolution_clock::now();
 
             for (int i = 0; i < c_Thread; i++)
             {
-                std::vector<int>n_v1;
-                std::vector<int>n_v2;
-                int r_bord = 0;
-
-                if (i != c_Thread - 1) r_bord = size_Threads * (i + 1);
-                else r_bord = c_Vector;
-
-
-                for (int j = size_Threads * i; j < r_bord; j++)
-                {
-                    n_v1.push_back(v1[j]);
-                    n_v2.push_back(v2[j]);
-                }
-                th.push_back(std::thread(sum_vec, n_v1, n_v2));
+                th.push_back(std::thread(sum_vec, v1, v2, resoult, start_stop[i], start_stop[i + 1] - 1));
             }
 
             for (auto& it : th)
