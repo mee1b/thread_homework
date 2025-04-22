@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 
-static void sum_vec(std::vector<int> v1, std::vector<int> v2, std::vector<int> resoult, int start, int end)
+static void sum_vec(const std::vector<int>& v1, const std::vector<int>& v2, std::vector<int>& resoult, int start, int end)
 {
     for (int i = start; i < end; i++)
     {
