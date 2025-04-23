@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 
-static void sum_vec(const std::vector<int>& v1, const std::vector<int>& v2, std::vector<int>& resoult, int start, int end)
+static void sum_vec(const std::vector<int>& v1, const std::vector<int>& v2, std::vector<int> resoult, int start, int end)
 {
     for (int i = start; i < end; i++)
     {
@@ -57,7 +57,7 @@ int main()
 
             for (int i = 0; i < c_Thread; i++)
             {
-                th.push_back(std::thread(sum_vec, v1, v2, resoult, start_stop[i], start_stop[i + 1] - 1));
+                th.push_back(std::thread(sum_vec, std::ref(v1), std::ref(v2), std::ref(resoult), start_stop[i], start_stop[i + 1] - 1));
             }
 
             for (auto& it : th)
@@ -69,6 +69,8 @@ int main()
 
             std::chrono::duration<double, std::milli> time = stop - start;
             std::cout << "\t" << time.count() << "ms";
+
+            resoult.clear();
         }
         std::cout << std::endl;
     }
